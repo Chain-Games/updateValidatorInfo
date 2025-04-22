@@ -16,8 +16,10 @@ This script helps you upload your validator's metadata and image to IPFS, then u
 
 ## 📦 Installation
 
-1. Switch to Node 18  
+1. Switch to Node 18
+```bash  
     nvm use 18
+```
 
 2. Configure environment  
     - Update the `.env` file in the project root
