@@ -6,7 +6,7 @@ This script helps you upload your validator's metadata and image to IPFS, then u
 
 ## 🚀 Prerequisites
 
-- **Validator key file**: `./test-chain-5/consensus/validator.key`
+- **Validator private key from file**: `./test-chain-5/consensus/validator.key`
 - **Polygon funds**: Some $POL (MATIC) in the validator wallet
 
 ## 🛠 Technical Requirements
