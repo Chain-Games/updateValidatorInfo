@@ -78,7 +78,26 @@ async function main() {
     const validatorId = validatorIdRaw.toString();
     console.log("🆔 Validator ID:", validatorId);
 
-    // Prepare transaction data manually for gas estimation
+    // Get accurate gas data from RPC using feeHistory
+    const feeHistory = await provider.send("eth_feeHistory", [
+      "0x5",       // Last 5 blocks
+      "latest",    // Ending at latest block
+      [10, 50, 90] // Percentiles
+    ]);
+
+    const baseFees = feeHistory.baseFeePerGas;
+    const priorityFees = feeHistory.reward;
+
+    const latestBaseFee = BigInt(baseFees.at(-1));
+    const avgPriorityFee = BigInt(priorityFees.at(-1)[1]); // 50th percentile
+    const maxFeePerGas = latestBaseFee + avgPriorityFee;
+
+    console.log("⛽ Gas Fees from RPC (eth_feeHistory):");
+    console.log("   Base Fee:", formatUnits(latestBaseFee, "gwei"), "gwei");
+    console.log("   Priority Fee:", formatUnits(avgPriorityFee, "gwei"), "gwei");
+    console.log("   Max Fee:", formatUnits(maxFeePerGas, "gwei"), "gwei");
+
+    // Estimate gas limit with buffer
     const txData = stakeManagerContract.interface.encodeFunctionData("setValidatorMetaDataURI", [
       validatorId,
       metaDataURI,
@@ -91,22 +110,11 @@ async function main() {
     });
 
     const gasLimit = estimatedGas * 110n / 100n;
-
-    // Fetch fee data
-    const feeData = await provider.getFeeData();
-    const maxPriorityFeePerGas = parseUnits("30", "gwei");
-    const baseFee = feeData.lastBaseFeePerGas ?? parseUnits("30", "gwei");
-    const maxFeePerGas = baseFee + maxPriorityFeePerGas;
-
-    console.log("⛽ Gas Fees:");
-    console.log("   Base Fee:", formatUnits(baseFee, "gwei"), "gwei");
-    console.log("   Priority Fee:", formatUnits(maxPriorityFeePerGas, "gwei"), "gwei");
-    console.log("   Max Fee:", formatUnits(maxFeePerGas, "gwei"), "gwei");
     console.log("   Estimated Gas Limit:", gasLimit.toString());
 
-    // Send transaction
+    // Send transaction using RPC-derived gas data
     const tx = await stakeManagerContract.setValidatorMetaDataURI(validatorId, metaDataURI, {
-      maxPriorityFeePerGas,
+      maxPriorityFeePerGas: avgPriorityFee,
       maxFeePerGas,
       gasLimit,
     });
