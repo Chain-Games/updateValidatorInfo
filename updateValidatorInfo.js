@@ -3,7 +3,9 @@ import FormData from "form-data";
 import { readFileSync, writeFileSync } from "fs";
 import axios from "axios";
 import { ethers, parseUnits, formatUnits } from "ethers";
-import STAKEMANAGER_ABI from "./abi/stakeManager.json" with { type: "json" };
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const STAKEMANAGER_ABI = require("./abi/stakeManager.json");
 
 // ---- Args ----
 const validatorPrivateKey = process.argv[2];
@@ -12,7 +14,7 @@ const validatorLink = process.argv[4];
 let validatorLogoPath = process.argv[5];
 
 if (!validatorPrivateKey || !validatorName || !validatorLink || !validatorLogoPath) {
-  console.error("❌ Usage: node setValidatorMetadata.js <PRIVATE_KEY> <NAME> <LINK> <LOGO_PATH>");
+  console.error("❌ Usage: node updateValidatorInfo.js <PRIVATE_KEY> <NAME> <LINK> <LOGO_PATH>");
   process.exit(1);
 }
 
@@ -118,4 +120,3 @@ async function main() {
 }
 
 main();
-
