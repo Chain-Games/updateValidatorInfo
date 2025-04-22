@@ -27,9 +27,11 @@ This script helps you upload your validator's metadata and image to IPFS, then u
     - Place a `PNG` image (256×256px) in this directory alongside the script  
     - Example: `my-logo.png`
 
-4. Install dependencies  
-    npm install
+4. Install dependencies
 
+```bash  
+    npm install
+```
 ---
 
 ## ▶️ Usage
@@ -45,8 +47,9 @@ Run the `updateValidatorInfo.js` script with the following arguments:
 
 ### Example
 
+```bash
     node updateValidatorInfo.js c9617b2f1dabf9f5501eba795008f587ecab164aeb31217a7b76448d62157209 "My Validator Node" " " ./my-logo.png
-
+```
 ---
 
 ## 📄 License
