@@ -122,6 +122,20 @@ async function main() {
     console.log("🚀 Transaction submitted:", tx.hash);
     const receipt = await tx.wait();
     console.log("✅ Transaction confirmed in block:", receipt.blockNumber);
+
+    const backendUrl = process.env.STAKING_BACKEND_URL;
+
+    await axios({
+      method: "POST",
+      url: `${backendUrl}/api/validator/create-or-update-validator-metadata`,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: {
+        validatorWalletAddress: validatorAddress,
+      },
+    });
+    
   } catch (error) {
     console.error("❌ Error:", error.message || error);
   }
